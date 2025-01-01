@@ -1,20 +1,20 @@
-import timeit
-import json
-import cv2
-import numpy as np
-import supervision as sv
+import timeit  # Used for measuring the duration of the script execution
+import json  # Used for loading and saving keypoints data in JSON format
+import cv2  # OpenCV library for image and video processing
+import numpy as np  # NumPy library for numerical operations
+import supervision as sv  # Custom library for video supervision and tracking
 
 from trackers import (
-    PlayerTracker, 
-    BallTracker, 
-    KeypointsTracker, 
-    Keypoint,
-    Keypoints,
-    PlayerKeypointsTracker,
-    TrackingRunner,
+    PlayerTracker,  # Tracker for detecting and tracking players
+    BallTracker,  # Tracker for detecting and tracking the ball
+    KeypointsTracker,  # Tracker for detecting and tracking keypoints
+    Keypoint,  # Class representing a single keypoint
+    Keypoints,  # Class representing a collection of keypoints
+    PlayerKeypointsTracker,  # Tracker for detecting and tracking player keypoints
+    TrackingRunner,  # Class for running the tracking process
 )
-from config import *
-from trackers.ball_tracker.court_3d_model import Court3DModel
+from config import *  # Import all configuration settings
+from trackers.ball_tracker.court_3d_model import Court3DModel  # 3D model of the court for ball tracking
 
 SELECTED_KEYPOINTS = []
 
@@ -40,27 +40,28 @@ PADEL COURT KEYPOINTS
 """
 
 def click_event(event, x, y, flags, params): 
-  
+    """
+    Callback function to handle mouse click events.
+    Appends the coordinates of the click to SELECTED_KEYPOINTS and displays them on the image.
+    """
     # checking for left mouse clicks 
     if event == cv2.EVENT_LBUTTONDOWN: 
-  
-        # displaying the coordinates 
-        # on the Shell 
+        # displaying the coordinates on the Shell 
         SELECTED_KEYPOINTS.append((x, y))
-  
-        # displaying the coordinates 
-        # on the image window 
+        # displaying the coordinates on the image window 
         font = cv2.FONT_HERSHEY_SIMPLEX 
-        cv2.putText(img, str(x) + ',' +
-                    str(y), (x,y), font, 
-                    1, (255, 0, 0), 2) 
+        cv2.putText(img, str(x) + ',' + str(y), (x,y), font, 1, (255, 0, 0), 2) 
         cv2.imshow('frame', img) 
 
 
 if __name__ == "__main__":
-    
+    """
+    Main function to run the padel analytics.
+    Loads video, sets up trackers, and runs the tracking process.
+    """
     t1 = timeit.default_timer()
 
+    # Load video information
     video_info = sv.VideoInfo.from_video_path(video_path=INPUT_VIDEO_PATH)
     fps, w, h, total_frames = (
         video_info.fps, 
@@ -69,30 +70,31 @@ if __name__ == "__main__":
         video_info.total_frames,
     )
 
+    # Get the first frame of the video
     first_frame_generator = sv.get_video_frames_generator(
         INPUT_VIDEO_PATH,
         start=0,
         stride=1,
         end=1,
     )
-
     img = next(first_frame_generator)
 
+    # Load or select court keypoints
     if FIXED_COURT_KEYPOINTS_LOAD_PATH is not None:
         with open(FIXED_COURT_KEYPOINTS_LOAD_PATH, "r") as f:
             SELECTED_KEYPOINTS = json.load(f)
     else:
         cv2.imshow('frame', img)
         cv2.setMouseCallback('frame', click_event) 
-        # wait for a key to be pressed to exit 
         cv2.waitKey(0) 
-        # close the window 
         cv2.destroyAllWindows() 
 
+    # Save selected court keypoints
     if FIXED_COURT_KEYPOINTS_SAVE_PATH is not None:
         with open(FIXED_COURT_KEYPOINTS_SAVE_PATH, "w") as f:
             json.dump(SELECTED_KEYPOINTS, f)
 
+    # Create fixed keypoints detection object
     fixed_keypoints_detection = Keypoints(
         [
             Keypoint(
@@ -105,9 +107,10 @@ if __name__ == "__main__":
 
     keypoints_array = np.array(SELECTED_KEYPOINTS)
 
+    # Create court model
     court_model = Court3DModel(keypoints=fixed_keypoints_detection)
 
-    # Polygon to filter person detections inside padel court
+    # Create polygon zone to filter person detections inside padel court
     polygon_zone = sv.PolygonZone(
         np.concatenate(
             (
@@ -121,9 +124,7 @@ if __name__ == "__main__":
         frame_resolution_wh=video_info.resolution_wh,
     )
 
-
     # FILTER FRAMES OF INTEREST (TODO)
-
 
     # Instantiate trackers
     players_tracker = PlayerTracker(
@@ -164,6 +165,7 @@ if __name__ == "__main__":
         save_path=KEYPOINTS_TRACKER_SAVE_PATH,
     )
 
+    # Create and run the tracking runner
     runner = TrackingRunner(
         trackers=[
             players_tracker, 
@@ -181,8 +183,10 @@ if __name__ == "__main__":
 
     runner.run()
 
+    # Dump ball tracker results
     ball_tracker.kalman_tracker.dump("result.html")
 
+    # Collect and save data if required
     if COLLECT_DATA:
         data = runner.data_analytics.into_dataframe(runner.video_info.fps)
         data.to_csv(COLLECT_DATA_PATH)

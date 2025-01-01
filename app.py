@@ -1,35 +1,37 @@
 """ Streamlit dashboard to interact with the data collected """
 
-import json
-import numpy as np
-import os
-import streamlit as st
-import plotly.graph_objects as go
-import pandas as pd
-import supervision as sv
-import pims
+import json  # Used for loading and saving keypoints data in JSON format
+import numpy as np  # NumPy library for numerical operations
+import os  # Used for interacting with the operating system
+import streamlit as st  # Streamlit library for creating web applications
+import plotly.graph_objects as go  # Plotly library for creating interactive plots
+import pandas as pd  # Pandas library for data manipulation and analysis
+import supervision as sv  # Custom library for video supervision and tracking
+import pims  # Library for reading video files
 
 from trackers import (
-    Keypoint, 
-    Keypoints, 
-    PlayerTracker, 
-    PlayerKeypointsTracker,
-    BallTracker, 
-    KeypointsTracker,
-    TrackingRunner
+    Keypoint,  # Class representing a single keypoint
+    Keypoints,  # Class representing a collection of keypoints
+    PlayerTracker,  # Tracker for detecting and tracking players
+    PlayerKeypointsTracker,  # Tracker for detecting and tracking player keypoints
+    BallTracker,  # Tracker for detecting and tracking the ball
+    KeypointsTracker,  # Tracker for detecting and tracking keypoints
+    TrackingRunner  # Class for running the tracking process
 )
-from analytics import DataAnalytics
-from visualizations.padel_court import padel_court_2d
-from estimate_velocity import BallVelocityEstimator, ImpactType
-from utils.video import save_video
-from config import *
+from analytics import DataAnalytics  # Custom module for data analytics
+from visualizations.padel_court import padel_court_2d  # Custom module for visualizing the padel court
+from estimate_velocity import BallVelocityEstimator, ImpactType  # Custom module for estimating ball velocity
+from utils.video import save_video  # Custom utility function to save video
+from config import *  # Import all configuration settings
 
-COLLECT_DATA = True
-
+COLLECT_DATA = True  # Flag to indicate whether to collect 2D projection data
 
 @st.fragment
 def velocity_estimator(video_info: sv.VideoInfo):
-        
+    """
+    Streamlit fragment to estimate ball velocity.
+    Allows the user to select frames and calculate the ball velocity.
+    """
     frame_index = st.slider(
         "Frames", 
         0, 
@@ -63,7 +65,6 @@ def velocity_estimator(video_info: sv.VideoInfo):
         estimate = st.form_submit_button("Calculate velocity")
 
     if estimate:
-
         assert frame_index_t0 < frame_index_t1
 
         if st.session_state["players_tracker"] is None:
@@ -107,7 +108,7 @@ def velocity_estimator(video_info: sv.VideoInfo):
             )
             st.plotly_chart(padel_court)
 
-
+# Initialize session state variables
 if "video" not in st.session_state:
     st.session_state["video"] = None
 
@@ -142,15 +143,12 @@ with st.form("run-video"):
     upload_video = st.form_submit_button("Upload")
 
 if upload_video or st.session_state["video"] is not None:
-
     if upload_video:
         st.session_state["df"] = None
         os.system(f"ffmpeg -y -i {upload_video_path} -vcodec libx264 tmp.mp4")
     
     if st.session_state["df"] is None:
-
         with st.spinner("Analysing video ..."):
-    
             video_info = sv.VideoInfo.from_video_path(video_path="tmp.mp4")  
             fps, w, h, total_frames = (
                 video_info.fps, 
@@ -263,7 +261,7 @@ if upload_video or st.session_state["video"] is not None:
         st.header("Collected data")
         st.write("First 5 rows")
         st.dataframe(st.session_state["df"].head())
-        st.markdown(f"- Number of rows: {len(st.session_state["df"])}")
+        st.markdown(f"- Number of rows: {len(st.session_state['df'])}")
         # st.write("- Columns: ")
         # st.write(st.session_state["df"].columns)
 
@@ -409,29 +407,24 @@ if upload_video or st.session_state["video"] is not None:
         )
         st.plotly_chart(padel_court)
 
-        
-
         def plotly_fig2array(fig):
             """
             Convert a plotly figure to numpy array
             """
             import io
             from PIL import Image
-            print("HERE3")
             fig_bytes = fig.to_image(format="png")
-            print("HERE4")
             buf = io.BytesIO(fig_bytes)
             img = Image.open(buf)
             return np.asarray(img)
 
         def court_frames(player_choice, velocity_type):
-
+            """
+            Generate frames for the court visualization with player positions and velocities.
+            """
             padel_court = padel_court_2d()
 
             for t in st.session_state["df"]["time"]:
-
-                print("HERE1")
-    
                 x_values = st.session_state["df"].query(
                     "time <= @t"
                 )[f"player{player_choice}_x"]
@@ -446,48 +439,29 @@ if upload_video or st.session_state["video"] is not None:
 
                 padel_court.add_trace(
                     go.Scatter(
-                                x=x_values,
-                                y=y_values,
-                                mode="markers",
-                                name=f"Player {player_choice}",
-                                text=v_values,
-                                marker=dict(
-                                    color=v_values,
-                                    size=12,
-                                    showscale=True,
-                                    colorscale="jet",
-                                    cmin=min_value * 3.6,
-                                    cmax=max_value * 3.6,
-                                )
-                            )
+                        x=x_values,
+                        y=y_values,
+                        mode="markers",
+                        name=f"Player {player_choice}",
+                        text=v_values,
+                        marker=dict(
+                            color=v_values,
+                            size=12,
+                            showscale=True,
+                            colorscale="jet",
+                            cmin=min_value * 3.6,
+                            cmax=max_value * 3.6,
+                        )
+                    )
                 )
-
-                print("HERE2")
 
                 yield plotly_fig2array(padel_court)
 
-        # for frame in court_frames(player_choice, velocity_type):
-        #     print(type(frame))
-        #    break    
-
+        # Uncomment the following lines to save the court frames as a video
         # save_video(
         #     court_frames(player_choice, velocity_type), 
-        #   "positions.mp4", 
+        #     "positions.mp4", 
         #     fps=st.session_state["runner"].video_info.fps,
-        #    w=st.session_state["runner"].video_info.width,
-        #    h=st.session_state["runner"].video_info.height,
-        #)
-
-        
-
-        
-        
-        
-
-        
-        
-        
-
- 
-        
-
+        #     w=st.session_state["runner"].video_info.width,
+        #     h=st.session_state["runner"].video_info.height,
+        # )
