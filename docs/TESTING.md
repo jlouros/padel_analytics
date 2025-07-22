@@ -71,7 +71,7 @@ If the analysis fails or the results are inaccurate, it is likely because the mo
 ## Example 7: Testing with a 0.5 Lens
 
 1. **Find a video with a 0.5 lens:** Find a video of a padel game that was filmed with a 0.5 lens and download it to the `examples/videos/` directory.
-2. **Update the config:** Open the `config.py` file and update the `VIDEO_PATH` variable to point to your new video.
+2. **Update the config:** Open the `config.py` file and update the `INPUT_VIDEO_PATH` variable to point to your new video.
 3. **Run the analysis:** Run the `main.py` script and observe the output.
    ```bash
    python main.py
