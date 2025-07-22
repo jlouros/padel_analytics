@@ -111,3 +111,55 @@ Since there are no dedicated test files in the repository, the best way to test 
 
 - **parse:** Used for parsing strings. It is used in the following files:
     - `trackers/ball_tracker/dataset.py`
+
+### 7. Visual Diagram
+
+```mermaid
+graph TD
+    subgraph "Entry Points"
+        A[main.py] --> B(app.py)
+    end
+
+    subgraph "Configuration"
+        C[config.py] --> B
+    end
+
+    subgraph "UI"
+        D[ui.py] --> B
+    end
+
+    subgraph "Core Logic"
+        B --> E{trackers}
+        E --> F[runner.py]
+        F --> G[ball_tracker]
+        F --> H[players_tracker]
+        F --> I[keypoints_tracker]
+        F --> J[players_keypoints_tracker]
+    end
+
+    subgraph "Analytics"
+        E --> K{analytics}
+        K --> L[data_analytics.py]
+        K --> M[projected_court.py]
+    end
+
+    subgraph "Visualizations"
+        B --> N{visualizations}
+        N --> O[padel_court.py]
+        N --> P[player_centric_graphs.py]
+    end
+
+    subgraph "Utilities"
+        Q[utils] --> B
+    end
+
+    subgraph "Packages"
+        R[opencv-python] --> E
+        S[pims] --> B
+        T[plotly] --> N
+        U[supervision] --> E
+        V[ultralytics] --> E
+        W[streamlit] --> B
+        X[parse] --> G
+    end
+```
