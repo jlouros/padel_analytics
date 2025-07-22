@@ -117,49 +117,54 @@ Since there are no dedicated test files in the repository, the best way to test 
 ```mermaid
 graph TD
     subgraph "Entry Points"
-        A[main.py] --> B(app.py)
+        A[main.py]:::python --> B(app.py):::python
     end
 
     subgraph "Configuration"
-        C[config.py] --> B
+        C[config.py]:::python --> B
     end
 
     subgraph "UI"
-        D[ui.py] --> B
+        D[ui.py]:::python --> B
     end
 
     subgraph "Core Logic"
-        B --> E{trackers}
-        E --> F[runner.py]
-        F --> G[ball_tracker]
-        F --> H[players_tracker]
-        F --> I[keypoints_tracker]
-        F --> J[players_keypoints_tracker]
+        B --> E{trackers}:::folder
+        E --> F[runner.py]:::python
+        F --> G[ball_tracker]:::component
+        F --> H[players_tracker]:::component
+        F --> I[keypoints_tracker]:::component
+        F --> J[players_keypoints_tracker]:::component
     end
 
     subgraph "Analytics"
-        E --> K{analytics}
-        K --> L[data_analytics.py]
-        K --> M[projected_court.py]
+        E --> K{analytics}:::folder
+        K --> L[data_analytics.py]:::python
+        K --> M[projected_court.py]:::python
     end
 
     subgraph "Visualizations"
-        B --> N{visualizations}
-        N --> O[padel_court.py]
-        N --> P[player_centric_graphs.py]
+        B --> N{visualizations}:::folder
+        N --> O[padel_court.py]:::python
+        N --> P[player_centric_graphs.py]:::python
     end
 
     subgraph "Utilities"
-        Q[utils] --> B
+        Q[utils]:::folder --> B
     end
 
     subgraph "Packages"
-        R[opencv-python] --> E
-        S[pims] --> B
-        T[plotly] --> N
-        U[supervision] --> E
-        V[ultralytics] --> E
-        W[streamlit] --> B
-        X[parse] --> G
+        R[opencv-python]:::package --> E
+        S[pims]:::package --> B
+        T[plotly]:::package --> N
+        U[supervision]:::package --> E
+        V[ultralytics]:::package --> E
+        W[streamlit]:::package --> B
+        X[parse]:::package --> G
     end
+
+    classDef python fill:#3498DB,color:#fff
+    classDef folder fill:#F1C40F,color:#fff
+    classDef component fill:#E74C3C,color:#fff
+    classDef package fill:#2ECC71,color:#fff
 ```
