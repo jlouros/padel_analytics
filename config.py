@@ -1,7 +1,14 @@
 """ General configurations for main.py """
 
+# Video type to be used for testing.
+# Available options: "30fps", "60fps", "90fps", "120fps", "partial_court", "0.5_lens", "low_quality"
+VIDEO_TYPE = None
+
 # Input video path
-INPUT_VIDEO_PATH = "./examples/videos/rally.mp4"
+if VIDEO_TYPE:
+    INPUT_VIDEO_PATH = f"./examples/videos/{VIDEO_TYPE}/video.mp4"
+else:
+    INPUT_VIDEO_PATH = "./examples/videos/rally.mp4"
 
 # Inference video path
 OUTPUT_VIDEO_PATH = "results.mp4"
