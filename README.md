@@ -54,6 +54,7 @@ Currently this implementation assumes a fixed camera setup. As a result, a UI fo
 - [Package Usage](docs/PACKAGE_USAGE.md)
 - [Beginner's Guide](docs/BEGINNERS_GUIDE.md)
 - [Model Weights](docs/MODEL_WEIGHTS.md)
+- [Ultralytics](docs/ULTRALYTICS.md)
 
 # Collaborations
 I am currently looking for collaborations to uplift this project to new heights. If you are interested feel free to e-mail me at jsilvawasd@hotmail.com.
