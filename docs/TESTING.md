@@ -34,7 +34,7 @@ Since there are no dedicated test files in the repository, the best way to test 
 ## Example 4: Testing with a Different Camera Angle
 
 1. **Find a video with a different camera angle:** Find a video of a padel game with a different camera angle and download it to the `examples/videos/` directory.
-2. **Update the config:** Open the `config.py` file and update the `VIDEO_PATH` variable to point to your new video.
+2. **Update the config:** Open the `config.py` file and update the `INPUT_VIDEO_PATH` variable to point to your new video.
 3. **Run the analysis:** Run the `main.py` script and observe the output.
    ```bash
    python main.py
