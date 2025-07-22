@@ -20,9 +20,12 @@ def main():
     if video_path.startswith("http"):
         print("Downloading video...")
         r = requests.get(video_path)
-        with open("examples/videos/video.mp4", "wb") as f:
+        video_dir = os.path.join("examples", "videos")
+        os.makedirs(video_dir, exist_ok=True)
+        video_file_path = os.path.join(video_dir, "video.mp4")
+        with open(video_file_path, "wb") as f:
             f.write(r.content)
-        video_path = "examples/videos/video.mp4"
+        video_path = video_file_path
         print("Video downloaded.")
 
     # 3. Update config
