@@ -34,7 +34,7 @@ If you are using Visual Studio Code, we recommend installing the following exten
 ## Step 3: Prepare Your Video
 
 1. **Place Your Video:** Place your video file in the `examples/videos/` directory.
-2. **Update Config:** Open the `config.py` file and update the `VIDEO_PATH` variable to point to your video file.
+2. **Update Config:** Open the `config.py` file and update the `INPUT_VIDEO_PATH` variable to point to your video file.
 
 ## Step 4: Run the Analysis
 
