@@ -4,7 +4,7 @@ The project follows a modular architecture that begins with video input and ends
 
 1. **Configuration and Input:** The process starts with `main.py`, which loads settings from `config.py`. The user then provides a video and selects key points on the court through the UI managed by `ui.py`.
 
-2. **Tracking:** The `trackers/runner.py` script takes the video and key points as input and uses various models to track the ball and playersframe by frame.
+2. **Tracking:** The `trackers/runner.py` script takes the video and key points as input and uses various models to track the ball and players frame by frame.
 
 3. **Data Analysis:** The tracking data is passed to the `analytics/` modules, where it is transformed into meaningful metrics like player heatmaps and ball speed.
 
