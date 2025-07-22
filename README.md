@@ -44,6 +44,16 @@ Currently this implementation assumes a fixed camera setup. As a result, a UI fo
 #### Inference results
 ![inference](https://github.com/user-attachments/assets/5a7432ff-35a6-4db4-acc2-cdb760b4bd8d)
 
+# Documentation
+
+- [Project Components](docs/COMPONENTS.md)
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [Execution Guide](docs/EXECUTION.md)
+- [Testing Guide](docs/TESTING.md)
+- [Areas for Improvement](docs/IMPROVEMENTS.md)
+- [Package Usage](docs/PACKAGE_USAGE.md)
+- [Beginner's Guide](docs/BEGINNERS_GUIDE.md)
+
 # Collaborations
 I am currently looking for collaborations to uplift this project to new heights. If you are interested feel free to e-mail me at jsilvawasd@hotmail.com.
 
