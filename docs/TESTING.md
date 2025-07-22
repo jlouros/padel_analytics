@@ -54,7 +54,7 @@ Since there are no dedicated test files in the repository, the best way to test 
 ## Example 6: Testing with a Partial Court View
 
 1. **Find a video with a partial court view:** Find a video of a padel game where the entire court is not visible and download it to the `examples/videos/` directory.
-2. **Update the config:** Open the `config.py` file and update the `VIDEO_PATH` variable to point to your new video.
+2. **Update the config:** Open the `config.py` file and update the `INPUT_VIDEO_PATH` variable to point to your new video.
 3. **Run the analysis:** Run the `main.py` script and observe the output.
    ```bash
    python main.py
