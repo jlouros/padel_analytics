@@ -37,7 +37,7 @@ def main():
     print("Config file updated.")
 
     # 4. Run analysis
-    os.system("python main.py")
+    subprocess.run(["python", "main.py"])
 
 if __name__ == "__main__":
     main()
