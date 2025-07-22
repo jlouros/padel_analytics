@@ -5,7 +5,7 @@ Since there are no dedicated test files in the repository, the best way to test 
 ## Example 1: Testing with a Different Video
 
 1. **Download a new video:** Find a new video of a padel game and download it to the `examples/videos/` directory.
-2. **Update the config:** Open the `config.py` file and update the `VIDEO_PATH` variable to point to your new video.
+2. **Update the config:** Open the `config.py` file and update the `INPUT_VIDEO_PATH` variable to point to your new video.
 3. **Run the analysis:** Run the `main.py` script and observe the output.
    ```bash
    python main.py
