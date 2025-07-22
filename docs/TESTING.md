@@ -91,7 +91,7 @@ If the analysis fails or the results are inaccurate, it is likely because the mo
 ## Example 8: Testing with Different Frame Rates
 
 1. **Find videos with different frame rates:** Find videos of padel games with different frame rates (30, 60, 90, and 120 fps) and download them to the `examples/videos/` directory.
-2. **Update the config:** Open the `config.py` file and update the `VIDEO_PATH` variable to point to your new video.
+2. **Update the config:** Open the `config.py` file and update the `INPUT_VIDEO_PATH` variable to point to your new video.
 3. **Run the analysis:** Run the `main.py` script and observe the output.
    ```bash
    python main.py
