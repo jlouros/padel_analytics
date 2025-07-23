@@ -32,8 +32,10 @@ class Test3DFilter:
         fig = filter.plot()
         # fig.show()
         # Save to file
-        with open("../render.html", "w") as f:
-            f.write(fig.to_html())
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as temp_file:
+            temp_file.write(fig.to_html().encode('utf-8'))
+            print(f"Rendered HTML saved to {temp_file.name}")
 
     def test_noise_sensitivity(self, court_model, ballistic_detections):
         """
