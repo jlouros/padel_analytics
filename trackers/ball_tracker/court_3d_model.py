@@ -253,9 +253,9 @@ def estimate_projection_matrix_with_vanishing_points(
     P = Vt[-1, :].reshape(3, 4)  # Reshape it into a 3x4 matrix
 
     condition_number = np.linalg.cond(A)
-    print("Least Squares fit of the projection matrix:")
-    print("Condition Number of A:", condition_number)
-    print("Projection matrix P:", P)
+    logging.info("Least Squares fit of the projection matrix:")
+    logging.info("Condition Number of A: %s", condition_number)
+    logging.info("Projection matrix P: %s", P)
 
     # Reshape the solution into the 3x4 projection matrix
 
