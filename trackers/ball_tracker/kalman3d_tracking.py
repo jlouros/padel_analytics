@@ -83,9 +83,9 @@ class KalmanFilter3DTracking(ExtendedKalmanFilter):
 
         # Extract optimized parameters
         x0, y0, z0, vx, vy, vz = result.x
-        print("Optimized initial position:", (x0, y0, z0))
-        print("Optimized initial velocity:", (vx, vy, vz))
-        print("R_squared:", 1 - result.cost / np.linalg.norm(observed_2d - observed_2d.mean(axis=0)) ** 2)
+        logging.info("Optimized initial position: %s", (x0, y0, z0))
+        logging.info("Optimized initial velocity: %s", (vx, vy, vz))
+        logging.info("R_squared: %f", 1 - result.cost / np.linalg.norm(observed_2d - observed_2d.mean(axis=0)) ** 2)
 
         estimated_initial_state = [x0, y0, z0, vx, vy, vz, 1]
 
