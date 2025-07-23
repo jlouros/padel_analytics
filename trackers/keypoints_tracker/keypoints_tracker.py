@@ -104,7 +104,7 @@ class Keypoints(Object):
     def __iter__(self) -> Iterable[Keypoint]:
         return (keypoint for keypoint in self.keypoints)
 
-    def __getitem__(self, id: int or slice) -> Keypoint or list[Keypoint]:
+    def __getitem__(self, id: Union[int, slice]) -> Union[Keypoint, list[Keypoint]]:
         if isinstance(id, int):
             return self.keypoints_by_id[id]
         elif isinstance(id, slice):
