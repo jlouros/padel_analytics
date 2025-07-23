@@ -1,20 +1,48 @@
-# kaleav
-ffmpeg
-matplotlib
-opencv-python~=4.10.0.84
-pims~=0.7
+# Updated for Python 3.13.5 compatibility
+# All packages tested and verified to work with Python 3.13.5
+
+# Video/Audio processing
+ffmpeg~=1.4
+
+# Plotting and visualization
+matplotlib~=3.10.3
 plotly~=5.24.1
-seaborn 
-supervision<0.24.0
-ultralytics~=8.3.20
-streamlit~=1.39.0
-parse~=1.20.2
-pytest~=8.3.3
-scipy~=1.14.1
-numpy~=2.1.2
-pandas~=2.2.3
+seaborn~=0.13.2
+
+# Computer vision and image processing
+opencv-python~=4.10.0.84
 pillow~=10.4.0
+
+# Video processing and frames
+pims~=0.7
+
+# Computer vision frameworks
+supervision~=0.23.0
+ultralytics~=8.3.169
+
+# Web UI framework
+streamlit~=1.39.1
+
+# Parsing utilities
+parse~=1.20.2
+
+# Testing framework
+pytest~=8.3.3
+
+# HTTP requests
+requests~=2.32.3
+
+# Scientific computing
+scipy~=1.14.1
+numpy~=2.2.6
+pandas~=2.2.3
+
+# Progress bars
 tqdm~=4.66.5
-torch~=2.5.0
+
+# Deep learning frameworks - UPDATED VERSIONS FOR PYTHON 3.13
+torch~=2.7.1
+torchvision~=0.22.1
+
+# Numerical differentiation
 numdifftools~=0.9.41
-torchvision~=0.20.0

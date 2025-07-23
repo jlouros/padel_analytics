@@ -18,3 +18,5 @@ videos/
 
 train/
 models/
+
+*.log
