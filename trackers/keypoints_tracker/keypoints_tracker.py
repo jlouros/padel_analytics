@@ -113,7 +113,7 @@ class Keypoints(Object):
                 for idx in range(id.start or 0, id.stop or len(self.keypoints), id.step or 1)
             ])
         else:
-            raise ValueError
+            raise ValueError(f"Invalid index type: {type(id)}. Expected int or slice.")
 
     def draw(self, frame: np.ndarray) -> np.ndarray:
         """
