@@ -21,6 +21,7 @@ Before running any analysis, verify these prerequisites:
 ### Method 1: Command Line Interface (Recommended for first-time users)
 
 #### Step 1: Prepare Your Environment
+
 ```bash
 # Activate your virtual environment
 source padel_analytics_env/bin/activate  # Mac/Linux
@@ -33,6 +34,7 @@ pip list | grep ultralytics  # Should show ultralytics package
 ```
 
 #### Step 2: Configure Your Analysis
+
 Open `config.py` and verify these critical settings:
 
 ```python
@@ -54,11 +56,13 @@ BALL_TRACKER_BATCH_SIZE = 16      # Lower this if you get memory errors
 ```
 
 #### Step 3: Run the Analysis
+
 ```bash
 python main.py
 ```
 
 #### Step 4: Select Court Keypoints
+
 When the keypoint selection window appears:
 
 1. **Take your time** - accuracy here affects all subsequent analysis
@@ -67,7 +71,8 @@ When the keypoint selection window appears:
 4. **Start with corners** (easier to identify accurately)
 
 **Keypoint Selection Tips:**
-```
+
+```none
 🎯 Pro Tips:
 - Zoom in if your video player allows it
 - Use a well-lit frame where lines are clearly visible  
@@ -76,8 +81,10 @@ When the keypoint selection window appears:
 ```
 
 #### Step 5: Monitor Progress
+
 During processing, you'll see output like:
-```
+
+```none
 🔄 Processing frame 150/1000 (15%)
 🎾 Ball detected in frame 150
 👥 2 players tracked in frame 150
@@ -85,6 +92,7 @@ During processing, you'll see output like:
 ```
 
 **Expected processing times:**
+
 - **30-second video**: 2-5 minutes
 - **2-minute video**: 8-15 minutes  
 - **10-minute video**: 40-75 minutes
@@ -94,6 +102,7 @@ During processing, you'll see output like:
 ### Method 2: Web Interface (Streamlit Dashboard)
 
 #### Step 1: Start the Web Application
+
 ```bash
 streamlit run app.py
 ```
@@ -101,18 +110,21 @@ streamlit run app.py
 This opens a web browser with an interactive dashboard.
 
 #### Step 2: Upload and Configure
+
 1. **Upload video**: Use the file uploader in the sidebar
 2. **Adjust settings**: Modify parameters using sliders and dropdowns
 3. **Select keypoints**: Interactive court diagram for point selection
 4. **Start analysis**: Click the "Run Analysis" button
 
-#### Advantages of Web Interface:
+#### Advantages of Web Interface
+
 - ✅ **Visual feedback**: See results in real-time
 - ✅ **Easy parameter tuning**: Adjust settings with sliders
 - ✅ **Shareable results**: Send links to colleagues
 - ✅ **No command line needed**: Entirely GUI-based
 
-#### When to Use Each Method:
+#### When to Use Each Method
+
 - **Command line**: First-time setup, batch processing, scripting
 - **Web interface**: Interactive analysis, presentations, parameter experimentation
 
@@ -121,6 +133,7 @@ This opens a web browser with an interactive dashboard.
 ### Essential Configuration Parameters
 
 #### Video Processing Settings
+
 ```python
 # Frame sampling - process every nth frame for speed
 FRAME_SKIP = 1  # Process every frame (1), every other frame (2), etc.
@@ -131,6 +144,7 @@ MIN_FRAME_QUALITY = 0.7       # Skip frames below this quality threshold
 ```
 
 #### AI Model Performance Tuning
+
 ```python
 # Confidence thresholds - higher = more conservative detection
 BALL_DETECTION_CONFIDENCE = 0.5     # 0.0 to 1.0
@@ -144,6 +158,7 @@ BATCH_SIZE_KEYPOINTS = 4  # Reduce if memory issues
 ```
 
 #### Output and Caching Settings
+
 ```python
 # Output formats
 SAVE_ANNOTATED_VIDEO = True    # Video with overlays
@@ -159,9 +174,11 @@ CACHE_EXPIRY_HOURS = 24      # How long to keep cached data
 ## 🚨 Troubleshooting Common Issues
 
 ### Issue 1: Memory Errors
+
 **Symptoms**: "CUDA out of memory" or "RuntimeError: out of memory"
 
 **Solutions** (try in order):
+
 ```python
 # 1. Reduce batch sizes in config.py
 PLAYERS_TRACKER_BATCH_SIZE = 4  # Instead of 16
@@ -178,9 +195,11 @@ FRAME_SKIP = 2                  # Process every other frame
 ```
 
 ### Issue 2: Poor Detection Quality  
+
 **Symptoms**: Ball or players not detected accurately
 
 **Diagnosis steps**:
+
 ```python
 # Check video quality
 - Resolution: Minimum 720p recommended
@@ -194,9 +213,11 @@ PLAYER_DETECTION_CONFIDENCE = 0.5  # Lower = more detections
 ```
 
 ### Issue 3: Keypoint Selection Problems
+
 **Symptoms**: Can't select keypoints or poor court projection
 
 **Solutions**:
+
 ```bash
 # Install GUI backend
 pip install PyQt5
@@ -212,9 +233,10 @@ export DISPLAY=:0  # Linux
 ## 📊 Understanding Output Results
 
 ### Generated Files and Folders
+
 After successful execution, you'll find:
 
-```
+```none
 output/
 ├── 📹 annotated_video.mp4          # Video with tracking overlays
 ├── 📊 analytics/
@@ -236,6 +258,7 @@ output/
 ### Interpreting Results
 
 #### Ball Tracking Data
+
 ```json
 {
     "frame_150": {
@@ -247,6 +270,7 @@ output/
 ```
 
 #### Player Analytics
+
 ```json
 {
     "player_1": {
@@ -262,6 +286,7 @@ output/
 ## 🎓 Best Practices for Reliable Results
 
 ### Video Preparation
+
 1. **Stable camera**: Minimize camera shake or movement
 2. **Good lighting**: Avoid shadows across court lines  
 3. **Full court view**: Ensure entire court is visible
@@ -269,12 +294,14 @@ output/
 5. **Consistent angle**: Side view works better than end view
 
 ### Keypoint Selection
+
 1. **Precise clicking**: Click exactly on line intersections
 2. **Good frame choice**: Use frame where all lines are visible
 3. **Consistent order**: Always follow the numbered sequence
 4. **Double-check**: Verify keypoints look correct before proceeding
 
 ### Performance Monitoring
+
 1. **Watch memory usage**: Monitor RAM and GPU memory
 2. **Check logs**: Read console output for warnings or errors
 3. **Validate results**: Review output videos for tracking accuracy

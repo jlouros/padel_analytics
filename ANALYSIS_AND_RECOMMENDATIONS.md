@@ -7,12 +7,14 @@ The `implement_filter` branch introduces a sophisticated 3D ball tracking system
 ## Major Changes Overview
 
 ### 🆕 New Components
+
 1. **Extended Kalman Filter (`trackers/ball_tracker/ekf.py`)**
 2. **3D Court Model (`trackers/ball_tracker/court_3d_model.py`)**  
 3. **3D Ball Tracking Filter (`trackers/ball_tracker/kalman3d_tracking.py`)**
 4. **Comprehensive Test Suite** (3 new test files)
 
 ### 🔄 Modified Components
+
 1. **Ball Tracker Integration** - Enhanced with 3D tracking capabilities
 2. **Projected Court** - Support for 14 keypoints and 3D ball projection
 3. **Main Pipeline** - Integration of court model throughout
@@ -45,6 +47,7 @@ The `implement_filter` branch introduces a sophisticated 3D ball tracking system
 ### ⚠️ Critical Issues
 
 #### 1. **Incomplete 14-Keypoint Support**
+
 ```python
 # Problem in analytics/projected_court.py:662, 672
 self.H = self.homography_matrix(keypoints_detection[:12])  # TODO: Account for 14 keypoints
@@ -55,6 +58,7 @@ self.H = self.homography_matrix(keypoints_detection[:12])  # TODO: Account for 1
 **Solution**: Implement proper 14-keypoint homography calculation that leverages height constraints.
 
 #### 2. **Numerical Stability Concerns**
+
 ```python
 # Problem in trackers/ball_tracker/ekf.py:39-42
 def _jacob_F(self, state):
@@ -69,11 +73,13 @@ def _jacob_H(self, state):
 **Solution**: Replace with analytical Jacobians for better stability and performance.
 
 #### 3. **Error Handling Gaps**
+
 - No validation of degenerate keypoint configurations
 - Limited outlier detection in measurements
 - No recovery mechanism for numerical instabilities
 
 #### 4. **Hard-coded Parameters**
+
 ```python
 # Issues throughout codebase
 Q = np.diag(np.power([.01, .01, .01, .01, .1, .01, 0], 2))  # Process noise
@@ -88,6 +94,7 @@ g = 9.81  # Gravity constant
 #### **Priority 1: Critical Fixes**
 
 1. **Complete 14-Keypoint Support**
+
    ```python
    def enhanced_homography_matrix(self, keypoints_detection: Keypoints) -> np.ndarray:
        if len(keypoints_detection) == 14:
@@ -104,6 +111,7 @@ g = 9.81  # Gravity constant
    ```
 
 2. **Implement Analytical Jacobians**
+
    ```python
    def transition_jacobian(self, x, dt=1./30):
        """Analytical Jacobian of transition function."""
@@ -120,6 +128,7 @@ g = 9.81  # Gravity constant
    ```
 
 3. **Add Robust Error Handling**
+
    ```python
    class RobustBallTracker:
        def validate_detection(self, detection: Tuple[float, float]) -> bool:
@@ -138,6 +147,7 @@ g = 9.81  # Gravity constant
 #### **Priority 2: Performance Optimizations**
 
 1. **Batch Processing for Projections**
+
    ```python
    def world2image_batch(self, points_3d: np.ndarray) -> np.ndarray:
        """Project multiple 3D points efficiently."""
@@ -147,6 +157,7 @@ g = 9.81  # Gravity constant
    ```
 
 2. **Optimize Matrix Operations**
+
    ```python
    # Pre-compute frequently used matrices
    def __init__(self, ...):
@@ -162,6 +173,7 @@ g = 9.81  # Gravity constant
    ```
 
 3. **Memory Pool for State Vectors**
+
    ```python
    class StatePool:
        def __init__(self, size=1000):
@@ -177,6 +189,7 @@ g = 9.81  # Gravity constant
 #### **Priority 3: Algorithm Improvements**
 
 1. **Adaptive Noise Parameters**
+
    ```python
    class AdaptiveKalmanFilter(KalmanFilter3DTracking):
        def update_noise_parameters(self, innovation_sequence):
@@ -186,6 +199,7 @@ g = 9.81  # Gravity constant
    ```
 
 2. **Multi-Hypothesis Tracking**
+
    ```python
    class MultiHypothesisTracker:
        def __init__(self, max_hypotheses=5):
@@ -198,6 +212,7 @@ g = 9.81  # Gravity constant
    ```
 
 3. **Bounce Detection Enhancement**
+
    ```python
    def detect_bounce(self, state_history, threshold=0.1):
        """Detect bounces from velocity direction changes."""
@@ -212,6 +227,7 @@ g = 9.81  # Gravity constant
 #### **Priority 4: Testing and Validation**
 
 1. **Property-Based Testing**
+
    ```python
    from hypothesis import given, strategies as st
    
@@ -226,6 +242,7 @@ g = 9.81  # Gravity constant
    ```
 
 2. **Integration Test with Real Data**
+
    ```python
    def test_with_real_video_sequence():
        # Load actual video frames and detections
@@ -233,6 +250,7 @@ g = 9.81  # Gravity constant
    ```
 
 3. **Performance Regression Tests**
+
    ```python
    def test_performance_regression():
        # Ensure new features don't slow down existing functionality
@@ -242,24 +260,28 @@ g = 9.81  # Gravity constant
 ## Implementation Roadmap
 
 ### Phase 1: Critical Fixes (1-2 weeks)
+
 - [ ] Complete 14-keypoint homography support
 - [ ] Replace numerical Jacobians with analytical ones
 - [ ] Add basic error handling and validation
 - [ ] Fix device compatibility issues
 
 ### Phase 2: Performance & Robustness (2-3 weeks)  
+
 - [ ] Implement batch processing optimizations
 - [ ] Add adaptive noise parameter tuning
 - [ ] Enhance bounce detection algorithm
 - [ ] Add comprehensive logging and monitoring
 
 ### Phase 3: Advanced Features (3-4 weeks)
+
 - [ ] Multi-hypothesis tracking for ambiguous detections
 - [ ] Real-time parameter adaptation
 - [ ] Advanced outlier detection and rejection
 - [ ] Performance profiling and optimization
 
 ### Phase 4: Validation & Documentation (1-2 weeks)
+
 - [ ] Comprehensive testing with real data
 - [ ] Performance benchmarking
 - [ ] Documentation and examples
@@ -268,18 +290,21 @@ g = 9.81  # Gravity constant
 ## Testing Strategy
 
 ### Unit Tests ✅
+
 - Individual component testing
 - Edge case handling
 - Parameter validation
 - Mathematical correctness
 
 ### Integration Tests ✅  
+
 - End-to-end pipeline testing
 - Component interaction validation
 - Error propagation testing
 - Performance benchmarks
 
 ### System Tests (Recommended)
+
 - Real video sequence validation
 - Accuracy metrics against ground truth
 - Stress testing with difficult scenarios
@@ -288,18 +313,21 @@ g = 9.81  # Gravity constant
 ## Quality Metrics
 
 ### Code Quality
+
 - [ ] Line coverage > 90%
 - [ ] Branch coverage > 85%
 - [ ] Cyclomatic complexity < 10 per function
 - [ ] No critical security vulnerabilities
 
 ### Performance Targets
+
 - [ ] Real-time processing (>30 FPS)
 - [ ] Memory usage < 500MB for 10-minute video
 - [ ] Initialization time < 1 second
 - [ ] Tracking accuracy > 95% (with ground truth)
 
 ### Reliability Targets
+
 - [ ] Handle 10+ consecutive missing detections
 - [ ] Recover from numerical instabilities
 - [ ] Process 1-hour videos without memory leaks
@@ -314,6 +342,7 @@ With the recommended fixes and improvements, this system can provide robust, acc
 ## Dependencies and Environment
 
 ### Additional Required Packages
+
 ```txt
 numdifftools~=0.9.41  # For numerical differentiation (to be replaced)
 scipy~=1.14.1         # For optimization algorithms
@@ -322,12 +351,14 @@ pytest~=8.3.3         # For comprehensive testing
 ```
 
 ### Hardware Recommendations
+
 - **GPU**: NVIDIA RTX 3060 or better (8GB+ VRAM)
 - **CPU**: 8+ cores for parallel processing
 - **RAM**: 16GB+ for processing long video sequences
 - **Storage**: SSD recommended for video I/O
 
 ### Development Environment
+
 - **Python**: 3.9+ (for better type hinting support)
 - **PyTorch**: Latest stable with CUDA support
 - **Development Tools**: Black, flake8, mypy for code quality

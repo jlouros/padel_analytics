@@ -1,9 +1,9 @@
-````markdown
 # 🧪 Testing Guide for Padel Analytics
 
 This comprehensive testing guide helps you validate the Padel Analytics system across different scenarios, from basic functionality to edge cases. Whether you're a developer or user, this guide ensures your analysis results are reliable and accurate.
 
 ## 🎯 What You'll Learn
+
 - How to systematically test the entire system
 - Different testing scenarios and their importance
 - How to validate results and detect issues
@@ -11,6 +11,7 @@ This comprehensive testing guide helps you validate the Padel Analytics system a
 - Creating your own test cases
 
 ## 📋 Prerequisites
+
 - **Completed setup**: Working installation following the Beginner's Guide
 - **Sample videos**: Access to different types of padel videos
 - **Basic understanding**: Familiarity with the analysis process
@@ -23,6 +24,7 @@ This comprehensive testing guide helps you validate the Padel Analytics system a
 Before running extensive tests, verify basic functionality:
 
 ### 30-Second System Check
+
 ```bash
 # 1. Activate environment
 source padel_analytics_env/bin/activate
@@ -50,9 +52,11 @@ python main.py  # Should open keypoint selection window
 ## 🎬 Video-Based Testing Scenarios
 
 ### Test 1: Standard Rally Analysis
+
 **Purpose**: Verify core functionality with ideal conditions
 
 **Test Video Requirements**:
+
 - **Duration**: 30-60 seconds
 - **Resolution**: 1080p or higher
 - **Camera angle**: Side view of court
@@ -60,7 +64,9 @@ python main.py  # Should open keypoint selection window
 - **Content**: Clear rally with ball and player movement
 
 **Test Steps**:
+
 1. **Setup**:
+
    ```python
    # Update config.py
    INPUT_VIDEO_PATH = "examples/videos/rally.mp4"
@@ -68,6 +74,7 @@ python main.py  # Should open keypoint selection window
    ```
 
 2. **Run Analysis**:
+
    ```bash
    python main.py
    ```
@@ -75,6 +82,7 @@ python main.py  # Should open keypoint selection window
 3. **Select Keypoints**: Choose 12 court keypoints carefully
 
 4. **Validate Results**:
+
    ```markdown
    ✅ Validation Checklist:
    - [ ] Ball is tracked consistently throughout rally
@@ -86,17 +94,20 @@ python main.py  # Should open keypoint selection window
    ```
 
 **Expected Performance**:
+
 - **Processing time**: 2-5 minutes for 30-second video
 - **Ball detection accuracy**: >90% of frames
 - **Player detection accuracy**: >95% of frames
 - **No system crashes or memory errors**
 
 ### Test 2: Different Camera Angles
+
 **Purpose**: Test system robustness with various perspectives
 
 **Test Variations**:
 
 #### Test 2A: High Camera Angle
+
 ```python
 # Expected challenges:
 - Players may appear smaller
@@ -110,6 +121,7 @@ python main.py  # Should open keypoint selection window
 ```
 
 #### Test 2B: Low Camera Angle
+
 ```python
 # Expected challenges:
 - Court lines might be partially obscured
@@ -123,6 +135,7 @@ python main.py  # Should open keypoint selection window
 ```
 
 #### Test 2C: Angled Side View
+
 ```python
 # Expected challenges:
 - Perspective distortion
@@ -138,9 +151,11 @@ python main.py  # Should open keypoint selection window
 ### Test 3: Challenging Video Conditions
 
 #### Test 3A: Low-Quality Video
+
 **Video specs**: 720p or lower, compressed, potential artifacts
 
 **Test Setup**:
+
 ```python
 # Adjust settings for low quality
 BALL_DETECTION_CONFIDENCE = 0.3  # Lower threshold
@@ -149,6 +164,7 @@ VIDEO_RESOLUTION_SCALE = 1.0  # Don't scale down further
 ```
 
 **Validation Focus**:
+
 ```markdown
 - [ ] System handles low resolution gracefully
 - [ ] Detection still works despite video compression
@@ -157,9 +173,11 @@ VIDEO_RESOLUTION_SCALE = 1.0  # Don't scale down further
 ```
 
 #### Test 3B: Poor Lighting Conditions
+
 **Scenarios**: Shadows, glare, uneven lighting, night games
 
 **Test Variations**:
+
 ```python
 # Heavy shadows
 - Court partially in shadow
@@ -178,6 +196,7 @@ VIDEO_RESOLUTION_SCALE = 1.0  # Don't scale down further
 ```
 
 **Validation Strategy**:
+
 ```python
 # Check detection confidence scores
 def analyze_detection_quality(results_file):
@@ -195,9 +214,11 @@ def analyze_detection_quality(results_file):
 ```
 
 #### Test 3C: Partial Court Visibility
+
 **Scenarios**: Court edges cut off, obstacles blocking view
 
 **Test Setup**:
+
 ```python
 # Expected challenges:
 - Not all 12 keypoints visible
@@ -211,6 +232,7 @@ def analyze_detection_quality(results_file):
 ```
 
 **Handling Partial Keypoints**:
+
 ```python
 # In ui.py, modify keypoint selection
 visible_keypoints = [1, 2, 3, 4, 6, 7]  # Only these are visible
@@ -225,9 +247,11 @@ missing_keypoints = [5, 8, 9, 10, 11, 12]
 ### Test 4: Specialized Scenarios
 
 #### Test 4A: Wide-Angle (Fisheye) Lens
+
 **Challenge**: Distortion correction needed
 
 **Pre-processing**:
+
 ```python
 # Add lens distortion correction
 import cv2
@@ -246,9 +270,11 @@ corrected_video = undistort_video(original_video)
 ```
 
 #### Test 4B: Multiple Camera Angles (Same Game)
+
 **Purpose**: Test consistency across different viewpoints
 
 **Test Process**:
+
 ```python
 # Analyze same rally from 2+ camera angles
 camera_1_results = analyze_video("rally_camera1.mp4")
@@ -270,9 +296,11 @@ def compare_multi_camera_results(results1, results2):
 ```
 
 #### Test 4C: Different Frame Rates
+
 **Purpose**: Ensure system works with various fps
 
 **Test Configurations**:
+
 ```python
 # Test with different frame rates
 test_frame_rates = [30, 60, 120, 240]
@@ -295,6 +323,7 @@ for fps in test_frame_rates:
 ### Benchmark Standard Videos
 
 **Create Performance Baseline**:
+
 ```python
 # performance_test.py
 import time
@@ -338,6 +367,7 @@ EXPECTED_PERFORMANCE = {
 ### Stress Testing
 
 #### Test 5A: Long Video Processing
+
 **Purpose**: Test memory management and stability
 
 ```python
@@ -377,6 +407,7 @@ for duration in test_durations:
 ```
 
 #### Test 5B: Batch Processing
+
 **Purpose**: Test system stability across multiple videos
 
 ```python
@@ -416,6 +447,7 @@ for i, video in enumerate(test_videos):
 ### Ground Truth Comparison
 
 #### Test 6A: Manual Annotation Validation
+
 **Purpose**: Compare AI results with human annotation
 
 ```python
@@ -478,6 +510,7 @@ def compare_with_ground_truth(ai_results, ground_truth):
 ```
 
 #### Test 6B: Physics-Based Validation
+
 **Purpose**: Check if calculated physics make sense
 
 ```python
@@ -527,6 +560,7 @@ def validate_physics(results):
 ### Test 7: Unusual Scenarios
 
 #### Test 7A: Empty Court (No Players)
+
 **Purpose**: Test system behavior when no players are present
 
 ```python
@@ -545,6 +579,7 @@ def test_no_players():
 ```
 
 #### Test 7B: No Ball Visible
+
 **Purpose**: Test with warm-up videos where ball isn't used
 
 ```python
@@ -559,6 +594,7 @@ def test_no_ball():
 ```
 
 #### Test 7C: Multiple Balls
+
 **Purpose**: Test with practice scenarios involving multiple balls
 
 ```python
@@ -573,6 +609,7 @@ def test_multiple_balls():
 ```
 
 #### Test 7D: Non-Padel Content
+
 **Purpose**: Test robustness with unrelated videos
 
 ```python
@@ -823,12 +860,14 @@ def track_performance_trends():
 ## 🎓 Best Practices for Testing
 
 ### 1. **Systematic Approach**
+
 - Start with basic functionality tests
 - Progress to edge cases and stress tests
 - Always validate results make physical sense
 - Document all test cases and expected outcomes
 
 ### 2. **Test Data Management**
+
 ```python
 # Organize test data systematically
 test_data/
@@ -842,6 +881,7 @@ test_data/
 ```
 
 ### 3. **Automated Validation**
+
 ```python
 def automated_result_validation(results):
     """Automatically check if results are reasonable"""
@@ -859,6 +899,7 @@ def automated_result_validation(results):
 ```
 
 ### 4. **Performance Baselines**
+
 ```python
 # Establish and maintain performance baselines
 PERFORMANCE_BASELINES = {
@@ -879,6 +920,7 @@ PERFORMANCE_BASELINES = {
 ```
 
 ### 5. **Regression Testing**
+
 ```python
 def regression_test_suite():
     """Run tests to ensure new changes don't break existing functionality"""
@@ -906,7 +948,7 @@ def regression_test_suite():
 
 ---
 
-## 🚀 Ready to Test!
+## 🚀 Ready to Test
 
 This comprehensive testing guide provides everything you need to thoroughly validate the Padel Analytics system. Remember:
 
@@ -917,11 +959,10 @@ This comprehensive testing guide provides everything you need to thoroughly vali
 - **Monitor performance**: Track speed and accuracy over time
 
 **Next Steps**:
+
 1. Run the Quick Verification Test
 2. Work through the video-based scenarios
 3. Set up automated testing for regular validation
 4. Create your own test cases for specific needs
 
 Happy testing! 🧪🎾
-
-````

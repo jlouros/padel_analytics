@@ -1,9 +1,9 @@
-````markdown
 # 🧠 AI Model Weights Guide
 
 Model weights are the "brain" of the AI system - they contain all the learned knowledge that allows the models to recognize balls, players, and court features. This guide explains everything you need to know about model weights in the Padel Analytics project.
 
 ## 🎯 What You'll Learn
+
 - What model weights are and why they're crucial
 - How to download and install pre-trained weights
 - How the weights are used in the system
@@ -11,6 +11,7 @@ Model weights are the "brain" of the AI system - they contain all the learned kn
 - Troubleshooting weight-related issues
 
 ## 📋 Prerequisites for Understanding
+
 - **Basic AI concepts**: Understanding that AI models learn from examples
 - **File management**: Knowing how to download and organize files
 - **Python basics**: Understanding imports and file paths
@@ -21,6 +22,7 @@ Model weights are the "brain" of the AI system - they contain all the learned kn
 ## 🧠 Understanding Model Weights
 
 ### What Are Model Weights?
+
 Think of model weights as the **"learned experience"** of an AI model. Just like a human expert recognizes a ball because they've seen thousands of balls before, an AI model recognizes objects because it has learned from thousands of training examples.
 
 ```python
@@ -38,12 +40,15 @@ AI Model:
 ```
 
 ### Why Are They Important?
+
 Without proper weights, the AI models would be like:
+
 - 👶 **A newborn baby**: Can see but doesn't recognize anything
 - 🤖 **Random guessing**: Makes completely incorrect predictions
 - 🎯 **No accuracy**: Unable to distinguish ball from background
 
 With trained weights:
+
 - 🎓 **Expert knowledge**: Recognizes objects with high accuracy
 - ⚡ **Fast processing**: Makes quick, confident predictions
 - 🎯 **Reliable results**: Consistent performance across different videos
@@ -53,6 +58,7 @@ With trained weights:
 ## 📦 Downloading and Installing Pre-trained Weights
 
 ### Step 1: Locate the Download Links
+
 The download links for pre-trained weights are provided in the main `README.md` file. Look for a section like:
 
 ```markdown
@@ -61,14 +67,16 @@ Download the pre-trained model weights from: [Download Link]
 ```
 
 ### Step 2: Download the Weight Files
+
 1. **Click the download link** (usually a cloud storage link)
 2. **Download the zip file** (typically 1-3 GB in size)
 3. **Save to a temporary location** on your computer
 
 ### Step 3: Extract and Organize
+
 Extract the downloaded files into your project's `weights/` directory:
 
-```
+```none
 padel_analytics/
 └── weights/
     ├── ball_detection/
@@ -82,6 +90,7 @@ padel_analytics/
 ```
 
 ### Step 4: Update Configuration
+
 Open `config.py` and verify the paths match your extracted files:
 
 ```python
@@ -93,6 +102,7 @@ PLAYERS_KEYPOINTS_TRACKER_MODEL = "weights/players_keypoints_detection/best.pt"
 ```
 
 ### Step 5: Verify Installation
+
 Test that weights are properly installed:
 
 ```python
@@ -124,6 +134,7 @@ if __name__ == "__main__":
 ## 🎯 How Weights Are Used in the System
 
 ### Loading Process
+
 When you start an analysis, here's what happens:
 
 ```python
@@ -135,6 +146,7 @@ When you start an analysis, here's what happens:
 ```
 
 ### During Analysis
+
 ```python
 # For each video frame:
 1. Frame sent to ball tracker → Uses ball weights → Detects ball
@@ -144,6 +156,7 @@ When you start an analysis, here's what happens:
 ```
 
 ### Memory Usage
+
 Understanding weight memory requirements:
 
 ```python
@@ -161,6 +174,7 @@ Total: ~350-700 MB GPU memory for all models
 ## 🏗️ Training Your Own Custom Weights
 
 Sometimes you might want to train custom weights for:
+
 - **Different sports**: Tennis, squash, badminton
 - **Different environments**: Indoor vs outdoor courts
 - **Specialized scenarios**: Wheelchair padel, beach padel
@@ -169,6 +183,7 @@ Sometimes you might want to train custom weights for:
 ### Prerequisites for Training
 
 #### Hardware Requirements
+
 ```python
 Minimum:
 - GPU: NVIDIA GTX 1060 (6GB VRAM) or better
@@ -184,6 +199,7 @@ Recommended:
 ```
 
 #### Software Requirements
+
 ```bash
 # Install training dependencies
 pip install ultralytics[train]
@@ -192,6 +208,7 @@ pip install labelImg  # For image annotation
 ```
 
 #### Dataset Requirements
+
 ```python
 Training Data Needed:
 - Ball Detection: 5,000+ images with ball annotations
@@ -212,6 +229,7 @@ Training Data Needed:
 #### Step 1: Create and Prepare Dataset
 
 **Option A: Use Existing Dataset**
+
 ```bash
 # Download a sports dataset from Roboflow
 pip install roboflow
@@ -229,12 +247,14 @@ dataset = project.version(1).download("yolov8")
 **Option B: Create Custom Dataset**
 
 1. **Collect Images**:
+
    ```bash
    # Extract frames from videos
    ffmpeg -i your_video.mp4 -vf fps=1 frames/frame_%04d.jpg
    ```
 
 2. **Annotate Images**:
+
    ```bash
    # Install and run LabelImg
    pip install labelImg
@@ -242,6 +262,7 @@ dataset = project.version(1).download("yolov8")
    ```
 
 3. **Annotation Guidelines**:
+
    ```python
    Ball Annotation:
    - Draw tight bounding box around ball
@@ -260,7 +281,8 @@ dataset = project.version(1).download("yolov8")
    ```
 
 #### Step 2: Organize Dataset Structure
-```
+
+```none
 dataset/
 ├── images/
 │   ├── train/          # 80% of images
@@ -274,6 +296,7 @@ dataset/
 ```
 
 **Create data.yaml**:
+
 ```yaml
 # data.yaml
 path: ./dataset
@@ -293,6 +316,7 @@ names: ['ball']  # Class names
 #### Step 3: Train the Model
 
 **Basic Training Script**:
+
 ```python
 # train_model.py
 from ultralytics import YOLO
@@ -324,6 +348,7 @@ model.export(format='onnx')  # Export to ONNX format if needed
 ```
 
 **Advanced Training Configuration**:
+
 ```python
 # advanced_training.py
 from ultralytics import YOLO
@@ -376,7 +401,8 @@ results = model.train(
 #### Step 4: Monitor Training Progress
 
 **Training Output Explanation**:
-```
+
+```none
 Epoch    GPU_mem   box_loss   cls_loss   dfl_loss   Instances      Size
 1/100      3.45G      0.123      0.045      0.098         128       640
 ```
@@ -389,6 +415,7 @@ Epoch    GPU_mem   box_loss   cls_loss   dfl_loss   Instances      Size
 - **Size**: Image size being processed
 
 **Validation Metrics**:
+
 ```
 Class     Images  Instances      P          R      mAP50   mAP50-95
 all         500       1500      0.85       0.92      0.89       0.65
@@ -403,6 +430,7 @@ ball        500       1500      0.85       0.92      0.89       0.65
 #### Step 5: Evaluate and Test Your Model
 
 **Testing Script**:
+
 ```python
 # test_model.py
 from ultralytics import YOLO
@@ -430,6 +458,7 @@ video_results = model('test_video.mp4', save=True)
 ```
 
 **Performance Benchmarking**:
+
 ```python
 # benchmark_model.py
 import time
@@ -468,6 +497,7 @@ benchmark_model('best.pt', ['test1.jpg', 'test2.jpg', 'test3.jpg'])
 #### Step 6: Integrate Your Custom Weights
 
 **Update Configuration**:
+
 ```python
 # config.py - Update with your new model paths
 BALL_TRACKER_MODEL = "training_runs/ball_detection_v1/weights/best.pt"
@@ -476,6 +506,7 @@ PLAYERS_TRACKER_MODEL = "training_runs/player_detection_v1/weights/best.pt"
 ```
 
 **Test Integration**:
+
 ```python
 # test_integration.py
 from trackers.ball_tracker.ball_tracker import BallTracker
@@ -499,8 +530,10 @@ print("Custom model result:", result)
 ### Common Problems and Solutions
 
 #### Issue 1: "FileNotFoundError: Model file not found"
+
 **Symptoms**: Error when starting analysis
 **Solutions**:
+
 ```python
 # Check if file exists
 import os
@@ -514,8 +547,10 @@ else:
 ```
 
 #### Issue 2: "CUDA out of memory" when loading models
+
 **Symptoms**: GPU memory error during model loading
 **Solutions**:
+
 ```python
 # Option 1: Reduce batch size in config.py
 BATCH_SIZE = 8  # Instead of 16
@@ -537,8 +572,10 @@ def load_models_sequentially():
 ```
 
 #### Issue 3: "Model version incompatibility"
+
 **Symptoms**: Error about unsupported model format
 **Solutions**:
+
 ```bash
 # Update ultralytics to latest version
 pip install --upgrade ultralytics
@@ -550,8 +587,10 @@ model.export(format='pt')  # Re-export in current format
 ```
 
 #### Issue 4: Poor detection quality with custom weights
+
 **Symptoms**: Low accuracy, missed detections
 **Diagnosis and solutions**:
+
 ```python
 # Check model performance metrics
 from ultralytics import YOLO
@@ -572,8 +611,10 @@ print(f"mAP50-95: {metrics.box.map:.3f}")
 ```
 
 #### Issue 5: Slow inference speed
+
 **Symptoms**: Processing takes much longer than expected
 **Solutions**:
+
 ```python
 # Option 1: Use smaller model
 # Replace yolov8l.pt with yolov8n.pt in config.py
@@ -608,18 +649,22 @@ INPUT_IMAGE_SIZE = 416  # Instead of 640
 ### Choosing the Right Weights
 
 **For Beginners**:
+
 - Use **YOLOv8s** weights - good balance of speed and accuracy
 - Start with pre-trained weights before considering custom training
 
 **For Real-time Analysis**:
+
 - Use **YOLOv8n** weights - fastest processing
 - Consider reducing input image resolution
 
 **For Research/Professional Use**:
+
 - Use **YOLOv8l** or **YOLOv8x** weights - highest accuracy
 - Custom training recommended for specialized requirements
 
 **For Limited GPU Memory**:
+
 - Use **YOLOv8n** weights - smallest memory footprint
 - Consider CPU-only processing if necessary
 
@@ -628,6 +673,7 @@ INPUT_IMAGE_SIZE = 416  # Instead of 640
 ## 🎓 Best Practices for Weight Management
 
 ### 1. **Version Control for Weights**
+
 ```bash
 # Don't commit weights to git (they're too large)
 # Instead, use git-lfs or cloud storage
@@ -639,6 +685,7 @@ training_runs/
 ```
 
 ### 2. **Weight Validation Pipeline**
+
 ```python
 # validate_weights.py
 def validate_model_weights(weight_path, test_dataset):
@@ -665,6 +712,7 @@ def validate_model_weights(weight_path, test_dataset):
 ```
 
 ### 3. **Automated Weight Updates**
+
 ```python
 # weight_manager.py
 import requests
@@ -708,6 +756,7 @@ Download complete!")
 ```
 
 ### 4. **Weight Backup Strategy**
+
 ```python
 # backup_weights.py
 import shutil
@@ -735,6 +784,7 @@ def restore_weights(backup_dir):
 ### Weight Optimization Techniques
 
 #### 1. **Model Quantization**
+
 ```python
 # Reduce model size and increase speed
 from ultralytics import YOLO
@@ -744,12 +794,14 @@ model.export(format='onnx', half=True)  # FP16 quantization
 ```
 
 #### 2. **Model Pruning**
+
 ```python
 # Remove less important connections to reduce model size
 # Note: Requires specialized libraries and careful validation
 ```
 
 #### 3. **Knowledge Distillation**
+
 ```python
 # Train smaller "student" model to mimic larger "teacher" model
 # Advanced technique for creating efficient models
@@ -758,6 +810,7 @@ model.export(format='onnx', half=True)  # FP16 quantization
 ### Integration with MLOps
 
 #### 1. **Model Registry**
+
 ```python
 # Track model versions, performance, and metadata
 model_registry = {
@@ -777,6 +830,7 @@ model_registry = {
 ```
 
 #### 2. **A/B Testing for Models**
+
 ```python
 # Compare performance of different model versions
 def ab_test_models(model_a_path, model_b_path, test_videos):
@@ -790,5 +844,3 @@ def ab_test_models(model_a_path, model_b_path, test_videos):
 ---
 
 This comprehensive guide should give you everything you need to understand, use, and create model weights for the Padel Analytics system. Remember that working with AI models is an iterative process - start simple, measure results, and gradually improve!
-
-````

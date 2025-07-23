@@ -1,9 +1,9 @@
-```markdown
 # 📦 Package Usage Guide
 
 This guide explains how each Python package is used in the Padel Analytics system. Understanding these dependencies will help you troubleshoot issues, optimize performance, and potentially extend the system.
 
 ## 🎯 What You'll Learn
+
 - Purpose of each package in the system
 - How packages interact with each other
 - Which packages are critical vs optional
@@ -13,6 +13,7 @@ This guide explains how each Python package is used in the Padel Analytics syste
 ## 📋 Package Overview
 
 The project uses several key categories of packages:
+
 - **🤖 AI/ML Libraries**: Core computer vision and machine learning
 - **🎬 Video Processing**: Video reading, writing, and manipulation
 - **📊 Visualization**: Charts, graphs, and interactive displays
@@ -24,9 +25,11 @@ The project uses several key categories of packages:
 ## 🤖 AI/ML Libraries
 
 ### 📦 `ultralytics` - YOLO Model Framework
+
 **What it does**: Provides the YOLO (You Only Look Once) object detection models
 
 **Where it's used**:
+
 ```python
 # Core detection in all tracker modules
 trackers/keypoints_tracker/keypoints_tracker.py
@@ -35,6 +38,7 @@ trackers/players_tracker/players_tracker.py
 ```
 
 **Key functions**:
+
 ```python
 from ultralytics import YOLO
 
@@ -49,12 +53,14 @@ model.train(data='dataset.yaml', epochs=100)
 ```
 
 **Why it's important**:
+
 - 🎯 **Core detection engine**: Powers all object detection in the system
 - ⚡ **State-of-the-art performance**: Latest YOLO models with excellent speed/accuracy balance
 - 🔧 **Easy to use**: Simple API for loading and using pre-trained models
 - 📈 **Actively maintained**: Regular updates with improvements
 
 **Common issues and solutions**:
+
 ```python
 # Issue: CUDA out of memory
 # Solution: Use smaller model or reduce batch size
@@ -68,9 +74,11 @@ model = YOLO('model.pt').to(device)
 ```
 
 ### 📦 `supervision` - Computer Vision Utilities
+
 **What it does**: Provides utilities for processing and visualizing computer vision results
 
 **Where it's used**:
+
 ```python
 # Visualization and result processing
 analytics/projected_court.py
@@ -85,6 +93,7 @@ trackers/tracker.py
 ```
 
 **Key functions**:
+
 ```python
 import supervision as sv
 
@@ -103,12 +112,14 @@ tracks = tracker.update_with_detections(detections)
 ```
 
 **Why it's important**:
+
 - 🎨 **Rich visualization**: Easy-to-use tools for drawing bounding boxes, labels, trajectories
 - 📊 **Data processing**: Utilities for converting between different detection formats
 - 🔍 **Tracking**: Built-in object tracking algorithms
 - 🎯 **Optimized**: High-performance implementations of common CV tasks
 
 **Common use cases**:
+
 ```python
 # Visualizing ball trajectory
 trail_annotator = sv.TrailAnnotator()
@@ -126,9 +137,11 @@ high_conf_detections = detections[detections.confidence > 0.8]
 ## 🎬 Video Processing
 
 ### 📦 `opencv-python` (cv2) - Computer Vision
+
 **What it does**: Core computer vision library for image and video processing
 
 **Where it's used**:
+
 ```python
 # Video processing throughout the system
 analytics/projected_court.py
@@ -147,6 +160,7 @@ utils/video.py
 ```
 
 **Key functions**:
+
 ```python
 import cv2
 
@@ -165,12 +179,14 @@ out.write(frame)
 ```
 
 **Why it's critical**:
+
 - 📹 **Video I/O**: Reading and writing video files
 - 🖼️ **Image processing**: Resizing, color conversion, filtering
 - 🔧 **Geometric transformations**: Perspective correction, homography
 - 🎯 **Core dependency**: Almost every component uses OpenCV
 
 **Performance tips**:
+
 ```python
 # Efficient video reading
 cap = cv2.VideoCapture('video.mp4')
@@ -187,15 +203,18 @@ gpu_result = cv2.cuda.resize(gpu_frame, (640, 480))
 ```
 
 ### 📦 `pims` - Video Frame Iterator
+
 **What it does**: Provides efficient video frame iteration and processing
 
 **Where it's used**:
+
 ```python
 # Video frame handling
 app.py
 ```
 
 **Key functions**:
+
 ```python
 import pims
 
@@ -210,6 +229,7 @@ frame_100 = video[100]  # Get frame number 100
 ```
 
 **Why it's useful**:
+
 - ⚡ **Efficient iteration**: Memory-efficient video frame processing
 - 🎯 **Random access**: Jump to specific frames without loading entire video
 - 🔧 **Format support**: Handles various video formats consistently
@@ -220,9 +240,11 @@ frame_100 = video[100]  # Get frame number 100
 ## 📊 Visualization Libraries
 
 ### 📦 `plotly` - Interactive Visualizations
+
 **What it does**: Creates interactive charts and graphs for data visualization
 
 **Where it's used**:
+
 ```python
 # Interactive charts and dashboards
 app.py
@@ -230,6 +252,7 @@ visualizations/padel_court.py
 ```
 
 **Key functions**:
+
 ```python
 import plotly.graph_objects as go
 import plotly.express as px
@@ -248,12 +271,14 @@ fig = px.density_heatmap(
 ```
 
 **Why it's powerful**:
+
 - 🖱️ **Interactive**: Users can zoom, pan, and explore data
 - 📱 **Web-ready**: Works seamlessly in web browsers
 - 🎨 **Professional**: High-quality, publication-ready visualizations
 - 📊 **Variety**: Supports many chart types (line, bar, heatmap, 3D, etc.)
 
 **Common chart types in the project**:
+
 ```python
 # Ball trajectory visualization
 fig = go.Figure()
@@ -277,15 +302,18 @@ fig = px.line(
 ```
 
 ### 📦 `streamlit` - Web Interface
+
 **What it does**: Creates the web-based dashboard for interactive analysis
 
 **Where it's used**:
+
 ```python
 # Web application interface
 app.py
 ```
 
 **Key functions**:
+
 ```python
 import streamlit as st
 
@@ -304,12 +332,14 @@ uploaded_file = st.file_uploader("Choose a video file", type=['mp4', 'avi'])
 ```
 
 **Why it's perfect for this project**:
+
 - 🚀 **Rapid development**: Create web apps with minimal code
 - 🎯 **Data science focused**: Built specifically for data visualization and analysis
 - 📱 **Responsive**: Works on desktop and mobile
 - 🔧 **Easy deployment**: Simple to share and deploy
 
 **Interface components used**:
+
 ```python
 # Video analysis dashboard
 col1, col2 = st.columns(2)
@@ -334,15 +364,18 @@ metrics_col3.metric("Court Coverage", "68%", "5%")
 ## 🛠️ Utility Libraries
 
 ### 📦 `parse` - String Parsing
+
 **What it does**: Provides pattern-based string parsing capabilities
 
 **Where it's used**:
+
 ```python
 # Data extraction and parsing
 trackers/ball_tracker/dataset.py
 ```
 
 **Key functions**:
+
 ```python
 import parse
 
@@ -358,6 +391,7 @@ parsed = parse.parse(template, detection_string)
 ```
 
 **Why it's useful**:
+
 - 🎯 **Pattern matching**: Extract structured data from strings
 - 🔧 **Type conversion**: Automatically convert to appropriate data types
 - 📝 **Readable**: More intuitive than regular expressions for simple patterns
@@ -372,8 +406,10 @@ parsed = parse.parse(template, detection_string)
 These packages appear in `requirements.txt` but are not actively used in the codebase:
 
 #### 📦 `matplotlib` - Static Plotting
+
 **Status**: Not currently used
 **Potential use**: Static chart generation for reports
+
 ```python
 # Could be used for:
 import matplotlib.pyplot as plt
@@ -385,8 +421,10 @@ plt.savefig('ball_speed_chart.png')
 ```
 
 #### 📦 `seaborn` - Statistical Visualization
+
 **Status**: Not currently used  
 **Potential use**: Statistical analysis and visualization
+
 ```python
 # Could be used for:
 import seaborn as sns
@@ -399,8 +437,10 @@ sns.histplot(data=ball_speeds, bins=30)
 ```
 
 #### 📦 `ffmpeg` - Video Processing
+
 **Status**: Not directly used
 **Potential use**: Advanced video processing and format conversion
+
 ```bash
 # Could be used for:
 # Video format conversion
@@ -411,6 +451,7 @@ ffmpeg -i video.mp4 -vf fps=1 frames/frame_%04d.png
 ```
 
 #### 📦 `kaleav` - Unknown Package
+
 **Status**: Not used
 **Action**: Can be removed from requirements.txt
 
@@ -421,18 +462,21 @@ ffmpeg -i video.mp4 -vf fps=1 frames/frame_%04d.png
 ### Installation Optimization
 
 #### Core Installation (Minimal)
+
 ```bash
 # Install only essential packages
 pip install opencv-python ultralytics supervision pyyaml numpy
 ```
 
 #### Full Installation (All Features)
+
 ```bash
 # Install all packages for complete functionality
 pip install -r requirements.txt
 ```
 
 #### Development Installation
+
 ```bash
 # Additional packages for development
 pip install -r requirements.txt
@@ -442,6 +486,7 @@ pip install pytest black isort mypy
 ### Dependency Resolution
 
 #### Version Compatibility
+
 ```python
 # requirements.txt with version constraints
 opencv-python>=4.8.0,<5.0.0
@@ -452,6 +497,7 @@ plotly>=5.15.0,<6.0.0
 ```
 
 #### Conditional Dependencies
+
 ```python
 # Optional GPU support
 torch>=2.0.0; sys_platform != "darwin"  # Linux/Windows
@@ -464,6 +510,7 @@ ffmpeg-python>=0.2.0; platform_system != "Windows"
 ### Performance Optimization
 
 #### GPU Optimization
+
 ```python
 # Check for CUDA availability
 import torch
@@ -476,6 +523,7 @@ else:
 ```
 
 #### Memory Management
+
 ```python
 # Monitor package memory usage
 import psutil
@@ -498,6 +546,7 @@ torch.cuda.empty_cache()  # If using GPU
 ### Common Installation Issues
 
 #### Issue 1: OpenCV Installation Problems
+
 ```bash
 # Symptoms: ImportError: No module named 'cv2'
 # Solutions:
@@ -509,6 +558,7 @@ pip install opencv-contrib-python
 ```
 
 #### Issue 2: CUDA/PyTorch Compatibility
+
 ```bash
 # Symptoms: CUDA not available or version mismatch
 # Check CUDA version:
@@ -519,6 +569,7 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
 ```
 
 #### Issue 3: Streamlit Port Conflicts
+
 ```bash
 # Symptoms: "Port 8501 is already in use"
 # Solutions:
@@ -531,6 +582,7 @@ lsof -ti:8501 | xargs kill -9  # Linux/Mac
 ### Performance Issues
 
 #### Issue 1: Slow Video Processing
+
 ```python
 # Check bottlenecks:
 import time
@@ -548,6 +600,7 @@ gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 ```
 
 #### Issue 2: High Memory Usage
+
 ```python
 # Monitor memory usage:
 def check_memory():
@@ -570,6 +623,7 @@ def check_memory():
 ### Potential Additions
 
 #### Performance Enhancements
+
 ```python
 # TensorRT for NVIDIA GPU optimization
 # pip install tensorrt
@@ -582,6 +636,7 @@ def check_memory():
 ```
 
 #### Advanced Analytics
+
 ```python
 # Pandas for advanced data analysis
 # pip install pandas
@@ -594,6 +649,7 @@ def check_memory():
 ```
 
 #### Enhanced Visualization
+
 ```python
 # Bokeh for interactive web visualizations
 # pip install bokeh
@@ -608,12 +664,14 @@ def check_memory():
 ### Package Cleanup Recommendations
 
 #### Remove Unused Packages
+
 ```bash
 # These can be safely removed if not used:
 pip uninstall matplotlib seaborn ffmpeg kaleav
 ```
 
 #### Reorganize Dependencies
+
 ```python
 # Split requirements into categories:
 # requirements-core.txt (essential packages)
@@ -625,5 +683,3 @@ pip uninstall matplotlib seaborn ffmpeg kaleav
 ---
 
 This package guide should help you understand the role of each dependency in the Padel Analytics system and how to optimize their usage for better performance and reliability.
-
-```

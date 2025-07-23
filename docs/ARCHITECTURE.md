@@ -1,16 +1,18 @@
-````markdown
 # Architecture Overview
 
 Welcome to the Padel Analytics architecture guide! This document will help you understand how all the pieces of this computer vision system work together.
 
 ## 🎯 What You'll Learn
+
 - How data flows through the system
 - The role of each major component
 - How different modules interact with each other
 - Key design patterns used throughout the project
 
 ## 📋 Prerequisites
+
 Before diving into the architecture, make sure you understand:
+
 - **Python basics**: Classes, functions, modules, and imports
 - **Object-oriented programming**: Inheritance and composition
 - **Computer vision concepts**: What object detection and tracking mean
@@ -20,7 +22,7 @@ Before diving into the architecture, make sure you understand:
 
 Think of this system as a **pipeline** - like a factory assembly line where each station performs a specific task:
 
-```
+```none
 Video Input → Court Setup → Object Tracking → Data Analysis → Visualizations
      ↓            ↓              ↓              ↓              ↓
    main.py    ui.py +        trackers/      analytics/   visualizations/
@@ -69,7 +71,8 @@ The project follows a modular architecture that begins with video input and ends
 ## 🧩 Core Components Deep Dive
 
 ### 📂 Project Structure at a Glance
-```
+
+```none
 padel_analytics/
 ├── 🚪 Entry Points
 │   ├── main.py          # CLI interface with court setup
@@ -106,6 +109,7 @@ padel_analytics/
 ### 🔑 Key Design Patterns
 
 #### 1. **Tracker Abstraction Pattern**
+
 All trackers inherit from a base `Tracker` class, ensuring consistency:
 
 ```python
@@ -127,6 +131,7 @@ class BallTracker(Tracker):
 **Why this matters**: As a junior developer, you can add new trackers by following this same pattern!
 
 #### 2. **Memory-Efficient Pipeline Pattern**
+
 The system processes videos frame-by-frame instead of loading everything into memory:
 
 ```python
@@ -140,6 +145,7 @@ for frame in video_reader:
 ```
 
 #### 3. **Configuration-Driven Design**
+
 All parameters are centralized in `config.py`:
 
 ```python
@@ -220,7 +226,8 @@ class TrackingRunner:
 ## 🔗 Component Interactions
 
 ### Configuration Flow
-```
+
+```none
 config.py → All Components
     ├── Model paths → Trackers
     ├── Batch sizes → GPU memory management
@@ -229,7 +236,8 @@ config.py → All Components
 ```
 
 ### Data Flow Between Components
-```
+
+```none
 Raw Video
     ↓
 Court Keypoints (UI selection)
