@@ -330,35 +330,7 @@ class PadelAnalyticsRunner:
         except Exception as e:
             logger.error(f"Error running analysis: {e}")
             return False
-        """Run the main analysis with proper error handling."""
-        try:
-            logger.info("Starting Padel Analytics...")
-            result = subprocess.run(
-                [sys.executable, "main.py"], 
-                capture_output=True, 
-                text=True,
-                timeout=3600  # 1 hour timeout
-            )
-            
-            if result.returncode == 0:
-                logger.info("Analysis completed successfully")
-                if result.stdout:
-                    print("Analysis output:")
-                    print(result.stdout)
-            else:
-                logger.error(f"Analysis failed with return code {result.returncode}")
-                if result.stderr:
-                    logger.error(f"Error output: {result.stderr}")
-                return False
-                
-            return True
-            
-        except subprocess.TimeoutExpired:
-            logger.error("Analysis timed out after 1 hour")
-            return False
-        except Exception as e:
-            logger.error(f"Error running analysis: {e}")
-            return False
+# Removed duplicate `run_analysis` method definition.
     
     def run(self):
         """Main execution method."""
