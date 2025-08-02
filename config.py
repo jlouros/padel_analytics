@@ -5,10 +5,7 @@
 VIDEO_TYPE = None
 
 # Input video path
-if VIDEO_TYPE:
-    INPUT_VIDEO_PATH = f"./examples/videos/{VIDEO_TYPE}/video.mp4"
-else:
-    INPUT_VIDEO_PATH = "./examples/videos/rally.mp4"
+INPUT_VIDEO_PATH = "examples/my/top-view-single-game.mp4"
 
 # Inference video path
 OUTPUT_VIDEO_PATH = "results.mp4"

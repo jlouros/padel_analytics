@@ -76,6 +76,8 @@ Currently this implementation assumes a fixed camera setup. As a result, a UI fo
 - [Beginner's Guide](docs/BEGINNERS_GUIDE.md)
 - [Model Weights](docs/MODEL_WEIGHTS.md)
 - [Ultralytics](docs/ULTRALYTICS.md)
+- [3D Court Model & 14-Keypoint Selection](docs/3D_COURT_MODEL_AND_14_KEYPOINTS.md)
+- [Keypoint Selection Quick Reference](docs/KEYPOINT_QUICK_REFERENCE.md)
 
 ## Collaborations
 

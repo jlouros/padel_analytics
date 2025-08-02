@@ -25,13 +25,21 @@ class Court3DModel:
             6: [self.width, self.length / 2, 0],  # k7
             10: [0, self.length, 0],  # k11
             11: [self.width, self.length, 0],  # k12
-            12: [0, 0, self.height],  # k13
-            13: [self.width, 0, self.height],  # k14
         }
+        
+        # Add height keypoints only if we have 14 keypoints
+        if len(keypoints) >= 14:
+            self.keypoint_correspondence[12] = [0, 0, self.height]  # k13
+            self.keypoint_correspondence[13] = [self.width, 0, self.height]  # k14
 
         self.keypoints = keypoints
         self.depth_vanishing_point = self._determine_vanishing_point(indexes=[[0, 5, 10], [1, 6, 11]])
-        self.height_vanishing_point = self._determine_vanishing_point(indexes=[[0, 12], [1, 13]])
+        # For 12 keypoints, use corners for height vanishing point instead of dedicated height points
+        if len(keypoints) >= 14:
+            self.height_vanishing_point = self._determine_vanishing_point(indexes=[[0, 12], [1, 13]])
+        else:
+            # Use top corners (k11, k12) and bottom corners (k1, k2) for height vanishing point
+            self.height_vanishing_point = self._determine_vanishing_point(indexes=[[10, 11], [0, 1]])
         self.projection_matrix = self._determine_projection_matrix()
 
     def _determine_vanishing_point(self, indexes):

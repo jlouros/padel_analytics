@@ -41,7 +41,7 @@ class TrackingRunner:
         trackers: list[Tracker],
         video_path: str | Path,
         inference_path: str | Path,
-        court_model: Court3DModel,
+        court_model: Optional[Court3DModel],
         start: int = 0,
         end: Optional[int] = None,
         collect_data: bool = False,

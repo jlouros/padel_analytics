@@ -308,7 +308,20 @@ class PlayerTracker(Tracker):
 
     def video_info_post_init(self, video_info: sv.VideoInfo) -> "PlayerTracker":
         self.video_info = video_info
-        self.byte_track = sv.ByteTrack(frame_rate=video_info.fps)
+        # Enhanced ByteTrack configuration for better identity preservation
+        self.byte_track = sv.ByteTrack(
+            frame_rate=video_info.fps,
+            track_activation_threshold=0.6,      # Higher confidence threshold (was 0.25)
+            lost_track_buffer=60,                # 2 seconds buffer at 30fps (was 30)
+            minimum_matching_threshold=0.8,      # Stricter matching threshold (was 0.8)
+        )
+        
+        # Initialize ID consistency enforcer to limit to 4 unique player IDs
+        from improvements.id_consistency_enforcer import IDConsistencyEnforcer
+        self.id_enforcer = IDConsistencyEnforcer(
+            max_players=4,
+            max_lost_frames=90  # 3 seconds at 30fps
+        )
         return self
 
     def object(self) -> Type[Object]:
@@ -354,7 +367,7 @@ class PlayerTracker(Tracker):
             iou=self.IOU,
             imgsz=self.IMGSZ,
             device=self.DEVICE,
-            # max_det=4,
+            max_det=4,  # Limit to 4 players maximum for padel
             classes=[0],
         )
 
@@ -367,6 +380,9 @@ class PlayerTracker(Tracker):
             detections = self.byte_track.update_with_detections(
                 detections=detections,
             )
+            
+            # Apply ID consistency enforcement to ensure max 4 unique player IDs
+            detections = self.id_enforcer.update_with_detections(detections)
 
             predictions.append(
                 Players(

@@ -233,6 +233,16 @@ k1─────────────────k2
 
 **What happens next**: The system saves these keypoints so you won't need to select them again for this court angle.
 
+#### Advanced: 14-Keypoint System (Currently Disabled)
+
+The system also supports an advanced **14-keypoint mode** that includes height information for enhanced 3D tracking:
+
+- **12 ground points** (same as above) + **2 height reference points** on the back wall
+- Enables advanced ball trajectory analysis and 3D court modeling
+- Currently disabled for stability, but can be enabled for future development
+
+📖 **Learn more**: See [3D Court Model & 14-Keypoint Selection](3D_COURT_MODEL_AND_14_KEYPOINTS.md) for detailed documentation.
+
 ### Step 3: Watch the Magic Happen
 
 Once you've selected all 12 points:

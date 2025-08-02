@@ -151,6 +151,10 @@ class PlayerKeypoints:
         frame = frame.copy()
 
         for connection in self.CONNECTIONS:
+            # Skip connections if either keypoint is missing
+            if connection[0] not in keypoints or connection[1] not in keypoints:
+                continue
+                
             cv2.line(
                 frame, 
                 keypoints[connection[0]],
@@ -245,6 +249,25 @@ class PlayerKeypointsTracker(Tracker):
     def video_info_post_init(self, video_info: sv.VideoInfo) -> "PlayerKeypointsTracker":
         return self
     
+    @staticmethod
+    def _extract_coordinate(keypoint, index):
+        """Safely extract x or y coordinate from keypoint tensor"""
+        import torch
+        if isinstance(keypoint, torch.Tensor):
+            if keypoint.dim() == 0:  # 0-dimensional tensor
+                return keypoint.item() if index == 0 else 0.0  # Only x coordinate available
+            elif keypoint.numel() == 0:
+                return 0.0
+            elif keypoint.dim() == 1 and len(keypoint) > index:
+                return keypoint[index].item() if keypoint[index].dim() == 0 else keypoint[index].flatten()[0].item()
+            elif keypoint.numel() > index:
+                flat = keypoint.flatten()
+                return flat[index].item()
+            else:
+                return 0.0
+        else:
+            return float(keypoint) if index == 0 else 0.0
+    
     def object(self) -> Type[Object]:
         return PlayersKeypoints
     
@@ -307,8 +330,8 @@ class PlayerKeypointsTracker(Tracker):
                             id=i,
                             name=PlayerKeypoints.KEYPOINTS_NAMES[i],
                             xy=(
-                                keypoint[0].item() * ratio_x,
-                                keypoint[1].item() * ratio_y,
+                                self._extract_coordinate(keypoint, 0) * ratio_x,
+                                self._extract_coordinate(keypoint, 1) * ratio_y,
                             )
                         )
                         for i, keypoint in enumerate(player_keypoints_detection)

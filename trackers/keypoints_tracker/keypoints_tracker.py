@@ -1,4 +1,4 @@
-from typing import Literal, Iterable, Optional, Type
+from typing import Literal, Iterable, Optional, Type, Union
 from tqdm import tqdm
 import json
 from pathlib import Path

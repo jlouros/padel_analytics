@@ -704,7 +704,7 @@ class BallTracker(Tracker):
                         xy=xy,
                         xyz=xyz,
                         visibility=pred_dict["Visibility"][i],
-                        projection=xyz[:2]
+                        projection=xyz[:2] if xyz is not None else None
                     )
                 )
             else:

@@ -7,6 +7,7 @@ import argparse
 import logging
 import tempfile
 import re
+import time
 from pathlib import Path
 from urllib.parse import urlparse
 from tqdm import tqdm
@@ -31,9 +32,10 @@ class PadelAnalyticsRunner:
     
     SUPPORTED_VIDEO_FORMATS = {'.mp4', '.avi', '.mov', '.mkv', '.wmv', '.flv', '.webm'}
     
-    def __init__(self, video_path=None, auto_clean=False, max_frames=None):
+    def __init__(self, video_path=None, auto_clean=False, delete_cache=False, max_frames=None):
         self.video_path = video_path
         self.auto_clean = auto_clean
+        self.delete_cache = delete_cache
         self.max_frames = max_frames
         self.config_backup_path = None
         
@@ -162,6 +164,26 @@ class PadelAnalyticsRunner:
     
     def clean_previous_results(self, interactive=True):
         """Clean previous results and cache with optional user confirmation."""
+        # Check if cache deletion was specified via command line
+        if not self.delete_cache and not self.auto_clean and interactive:
+            print("\n" + "="*60)
+            print("CACHE DELETION NOTICE:")
+            print("Cache deletion was not specified via --delete-cache argument.")
+            print("This setting cannot be changed during execution.")
+            print("To delete cache, restart with --delete-cache or -d flag.")
+            print("="*60 + "\n")
+            
+            response = input("Continue with existing cache? (y/n): ").lower()
+            if response != 'y':
+                logger.info("User chose not to continue with existing cache")
+                return False
+            logger.info("Keeping existing cache and results")
+            return True
+        elif not self.delete_cache and not self.auto_clean:
+            # Non-interactive mode - just keep existing cache
+            logger.info("Keeping existing cache and results")
+            return True
+        
         keypoints_file = "./cache/fixed_keypoints_detection.json"
         keypoints_backup = None
         
@@ -169,7 +191,7 @@ class PadelAnalyticsRunner:
             response = input("Do you want to delete all previous results and cache? (y/n): ").lower()
             if response != 'y':
                 logger.info("Keeping previous results")
-                return
+                return True
             
             # Ask about preserving keypoints
             if os.path.exists(keypoints_file):
@@ -197,9 +219,12 @@ class PadelAnalyticsRunner:
                 if log_file.name != "padel_analytics.log":  # Keep current log
                     log_file.unlink()
                     logger.info(f"Deleted old log file: {log_file}")
-                    
+        
         except Exception as e:
             logger.error(f"Error cleaning previous results: {e}")
+            return False
+        
+        return True
     
     def get_video_path_interactive(self):
         """Interactive method to get video path from user."""
@@ -301,44 +326,131 @@ class PadelAnalyticsRunner:
             return False
     
     def run_analysis(self):
-        """Run the main analysis with proper error handling."""
+        """Run the main analysis with proper error handling and detailed progress tracking."""
         try:
             logger.info("Starting Padel Analytics...")
-            result = subprocess.run(
+            logger.info("="*50)
+            logger.info("ANALYSIS PROGRESS TRACKING")
+            logger.info("="*50)
+            logger.info("📹 Initializing video processing pipeline...")
+            
+            # Start the subprocess with real-time output
+            process = subprocess.Popen(
                 [sys.executable, "main.py"], 
-                capture_output=True, 
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
                 text=True,
-                timeout=3600  # 1 hour timeout
+                bufsize=1,
+                universal_newlines=True
             )
             
-            if result.returncode == 0:
-                logger.info("Analysis completed successfully")
-                if result.stdout:
-                    print("Analysis output:")
-                    print(result.stdout)
+            # Real-time output monitoring
+            output_lines = []
+            last_log_time = 0
+            frame_count = 0
+            
+            logger.info("🚀 Analysis process started (PID: {})".format(process.pid))
+            logger.info("📊 Monitoring real-time progress...")
+            
+            while True:
+                output = process.stdout.readline()
+                if output == '' and process.poll() is not None:
+                    break
+                    
+                if output:
+                    line = output.strip()
+                    output_lines.append(line)
+                    
+                    # Enhanced progress tracking with detailed logging
+                    current_time = time.time()
+                    
+                    # Log every 5 seconds or on important events
+                    should_log = (current_time - last_log_time > 5) or any(keyword in line.lower() for keyword in [
+                        'frame', 'processing', 'tracker', 'keypoint', 'ball', 'player', 'analytics', 
+                        'error', 'warning', 'completed', 'finished', 'starting', 'loading'
+                    ])
+                    
+                    if should_log:
+                        # Extract frame information if present
+                        if 'frame' in line.lower():
+                            import re
+                            frame_match = re.search(r'frame[:\s]*(\d+)', line.lower())
+                            if frame_match:
+                                frame_count = int(frame_match.group(1))
+                                logger.info(f"🎬 Processing frame {frame_count} | {line}")
+                            else:
+                                logger.info(f"🔄 {line}")
+                        elif any(keyword in line.lower() for keyword in ['tracker', 'keypoint', 'ball', 'player']):
+                            logger.info(f"🎯 {line}")
+                        elif any(keyword in line.lower() for keyword in ['loading', 'initializing', 'starting']):
+                            logger.info(f"⚙️  {line}")
+                        elif any(keyword in line.lower() for keyword in ['completed', 'finished', 'done']):
+                            logger.info(f"✅ {line}")
+                        elif any(keyword in line.lower() for keyword in ['error', 'failed']):
+                            logger.error(f"❌ {line}")
+                        elif 'warning' in line.lower():
+                            logger.warning(f"⚠️  {line}")
+                        else:
+                            logger.info(f"📝 {line}")
+                        
+                        last_log_time = current_time
+            
+            # Wait for process to complete
+            return_code = process.wait()
+            
+            if return_code == 0:
+                logger.info("="*50)
+                logger.info("✅ ANALYSIS COMPLETED SUCCESSFULLY")
+                logger.info(f"🎬 Total frames processed: {frame_count}")
+                logger.info("="*50)
+                
+                # Show final output summary
+                if output_lines:
+                    logger.info("📋 Final output summary:")
+                    for line in output_lines[-10:]:  # Show last 10 lines
+                        if line.strip():
+                            logger.info(f"   {line}")
             else:
-                logger.error(f"Analysis failed with return code {result.returncode}")
-                if result.stderr:
-                    logger.error(f"Error output: {result.stderr}")
+                logger.error("="*50)
+                logger.error(f"❌ ANALYSIS FAILED (Exit code: {return_code})")
+                logger.error("="*50)
+                
+                # Show error output
+                if output_lines:
+                    logger.error("📋 Error output:")
+                    for line in output_lines[-20:]:  # Show last 20 lines for debugging
+                        if line.strip():
+                            logger.error(f"   {line}")
                 return False
                 
             return True
             
         except subprocess.TimeoutExpired:
-            logger.error("Analysis timed out after 1 hour")
+            logger.error("❌ Analysis timed out after 1 hour")
             return False
         except Exception as e:
-            logger.error(f"Error running analysis: {e}")
+            logger.error(f"❌ Error running analysis: {e}")
             return False
 # Removed duplicate `run_analysis` method definition.
     
     def run(self):
         """Main execution method."""
         try:
+            # Always delete padel_analytics.log at the beginning
+            log_file = "padel_analytics.log"
+            if os.path.exists(log_file):
+                try:
+                    os.remove(log_file)
+                    print(f"Deleted previous log file: {log_file}")
+                except Exception as e:
+                    print(f"Warning: Could not delete previous log file: {e}")
+            
             logger.info("=== Padel Analytics Runner Started ===")
             
             # Step 1: Clean previous results
-            self.clean_previous_results(interactive=not self.auto_clean)
+            if not self.clean_previous_results(interactive=not self.auto_clean):
+                logger.error("Cache cleaning step failed or was cancelled by user")
+                return False
             
             # Step 2: Get video path
             if not self.video_path:
@@ -405,6 +517,11 @@ def main():
         help="Automatically clean previous results without prompting"
     )
     parser.add_argument(
+        "--delete-cache", "-d",
+        action="store_true",
+        help="Delete previous cache and results (cannot be changed during execution)"
+    )
+    parser.add_argument(
         "--max-frames", "-f",
         type=int,
         help="Maximum number of frames to analyze"
@@ -424,6 +541,7 @@ def main():
     runner = PadelAnalyticsRunner(
         video_path=args.video,
         auto_clean=args.auto_clean,
+        delete_cache=args.delete_cache,
         max_frames=args.max_frames
     )
     

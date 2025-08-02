@@ -636,7 +636,7 @@ class ProjectedCourt:
         keypoints_detection: Keypoints,
         players_detection: Optional[Players],
         ball_detection: Optional[Ball],
-        court_model: Court3DModel,
+        court_model: Optional[Court3DModel],
         data_analytics: Optional[DataAnalytics] = None,
         is_fixed_keypoints: bool = False,
     ) -> tuple[np.ndarray, DataAnalytics]:
@@ -684,7 +684,7 @@ class ProjectedCourt:
         else:
             print("projected_court: Missing data for players projection")
 
-        if self.H is not None and ball_detection:
+        if self.H is not None and ball_detection and court_model is not None:
             output_frame = self.draw_projected_ball(
                 output_frame,
                 ball_detection=ball_detection,
@@ -692,7 +692,7 @@ class ProjectedCourt:
                 court_model=court_model
             )
         else:
-            print("projected_court: Missing data for ball projection")
+            print("projected_court: Missing data for ball projection (or 3D court model disabled)")
 
         return output_frame, data_analytics
 
