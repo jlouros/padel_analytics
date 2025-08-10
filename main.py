@@ -1,5 +1,6 @@
 import timeit
 import json
+import os
 import cv2
 import numpy as np
 import supervision as sv
@@ -14,7 +15,7 @@ from trackers import (
     TrackingRunner,
 )
 from config import *
-
+from trackers.ball_tracker.court_3d_model import Court3DModel
 
 SELECTED_KEYPOINTS = []
 
@@ -78,7 +79,7 @@ if __name__ == "__main__":
 
     img = next(first_frame_generator)
 
-    if FIXED_COURT_KEYPOINTS_LOAD_PATH is not None:
+    if FIXED_COURT_KEYPOINTS_LOAD_PATH is not None and os.path.exists(FIXED_COURT_KEYPOINTS_LOAD_PATH):
         with open(FIXED_COURT_KEYPOINTS_LOAD_PATH, "r") as f:
             SELECTED_KEYPOINTS = json.load(f)
     else:
@@ -90,6 +91,7 @@ if __name__ == "__main__":
         cv2.destroyAllWindows() 
 
     if FIXED_COURT_KEYPOINTS_SAVE_PATH is not None:
+        os.makedirs(os.path.dirname(FIXED_COURT_KEYPOINTS_SAVE_PATH), exist_ok=True)
         with open(FIXED_COURT_KEYPOINTS_SAVE_PATH, "w") as f:
             json.dump(SELECTED_KEYPOINTS, f)
 
@@ -104,6 +106,13 @@ if __name__ == "__main__":
     )
 
     keypoints_array = np.array(SELECTED_KEYPOINTS)
+
+    # Temporarily disable 3D court model for 12-keypoint compatibility
+    # The 3D court model supports 14-keypoint selection for enhanced ball tracking
+    # See docs/3D_COURT_MODEL_AND_14_KEYPOINTS.md for detailed documentation
+    # court_model = Court3DModel(keypoints=fixed_keypoints_detection)
+    court_model = None
+
     # Polygon to filter person detections inside padel court
     polygon_zone = sv.PolygonZone(
         np.concatenate(
@@ -149,6 +158,7 @@ if __name__ == "__main__":
         median=None,
         load_path=BALL_TRACKER_LOAD_PATH,
         save_path=BALL_TRACKER_SAVE_PATH,
+        court_model=court_model,
     )
 
     keypoints_tracker = KeypointsTracker(
@@ -172,9 +182,17 @@ if __name__ == "__main__":
         start=0,
         end=MAX_FRAMES,
         collect_data=COLLECT_DATA,
+        court_model=court_model
     )
 
     runner.run()
+
+    # Dump Kalman tracker results if available
+    if hasattr(ball_tracker, 'kalman_tracker') and ball_tracker.kalman_tracker is not None:
+        ball_tracker.kalman_tracker.dump("result.html")
+        print("Kalman tracker results dumped to result.html")
+    else:
+        print("Kalman tracker not available (likely using basic ball tracking)")
 
     if COLLECT_DATA:
         data = runner.data_analytics.into_dataframe(runner.video_info.fps)
